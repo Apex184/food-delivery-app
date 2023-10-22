@@ -10,7 +10,7 @@
     "postinstall": "npm run build"
   },
   "engines": {
-    "node": "19.4.0",
+    "node": "14.x",
     "npm": "9.8.1"
   },
   "keywords": [],
