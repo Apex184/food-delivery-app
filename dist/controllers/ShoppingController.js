@@ -5,8 +5,7 @@ const models_1 = require("../models");
 const getFoodAvailability = async (req, res, next) => {
     try {
         const pincode = req.params.pincode;
-        const result = await models_1.Vendor.find({ pinCode: pincode, serviceAvailable: true })
-            .sort([["rating", "descending"]])
+        const result = await models_1.Vendor.find({ pinCode: pincode, serviceAvailable: false })
             .populate("foods");
         if (result.length > 0) {
             res.status(200).json({
@@ -31,9 +30,9 @@ exports.getFoodAvailability = getFoodAvailability;
 const getTopRestaurants = async (req, res, next) => {
     try {
         const pincode = req.params.pincode;
-        const result = await models_1.Vendor.find({ pinCode: pincode, serviceAvailable: true })
-            .sort([["rating", "descending"]])
-            .limit(1);
+        const result = await models_1.Vendor.find({ pinCode: pincode, serviceAvailable: false })
+            .sort({ rating: -1 })
+            .limit(10);
         if (result.length > 0) {
             res.status(200).json({
                 message: "Available",
@@ -57,7 +56,7 @@ exports.getTopRestaurants = getTopRestaurants;
 const getFoodIn30Min = async (req, res, next) => {
     try {
         const pincode = req.params.pincode;
-        const result = await models_1.Vendor.find({ pinCode: pincode, serviceAvailable: true }).populate('foods');
+        const result = await models_1.Vendor.find({ pinCode: pincode, serviceAvailable: false }).populate('foods');
         if (result.length > 0) {
             let foodResult = [];
             result.map(vendor => {

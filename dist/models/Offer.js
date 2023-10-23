@@ -23,38 +23,44 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Customer = void 0;
+exports.Offer = void 0;
 const mongoose_1 = __importStar(require("mongoose"));
-const CustomerSchema = new mongoose_1.Schema({
-    phone: { type: String, required: true },
-    email: { type: String, required: true },
-    password: { type: String, required: true },
-    firstName: { type: String, },
-    lastName: { type: String, },
-    address: { type: String },
-    salt: { type: String, required: true },
-    verified: { type: Boolean, required: true },
-    otp: { type: Number, required: true },
-    otp_expiry: { type: Date, required: true },
-    lat: { type: Number },
-    cart: [{
-            food: { type: mongoose_1.default.SchemaTypes.ObjectId, required: true, ref: "Food" },
-            unit: { type: Number, required: true },
-        }],
-    orders: [{
-            type: mongoose_1.default.SchemaTypes.ObjectId, required: true, ref: "Order"
-        }],
+const OfferSchema = new mongoose_1.Schema({
+    offerType: { type: String, required: true },
+    vendors: [
+        {
+            type: mongoose_1.Schema.Types.ObjectId, ref: "Vendor",
+        }
+    ],
+    title: { type: String, required: true },
+    description: { type: String, },
+    minValue: { type: Number, required: true },
+    offerAmount: { type: Number, required: true },
+    startValidity: { type: Date, },
+    endValidity: { type: Date, },
+    promoCode: { type: String, required: true },
+    promoType: { type: String, required: true },
+    bank: [
+        {
+            type: String, required: true
+        }
+    ],
+    bins: [
+        {
+            type: Number,
+        }
+    ],
+    pinCode: { type: String, required: true },
+    isActive: { type: Boolean, },
 }, {
     toJSON: {
         transform(doc, ret) {
-            delete ret.password;
-            delete ret.salt;
-            delete ret.__v;
-            delete ret.updatedAt;
-            delete ret.createdAt;
-        },
+            delete ret.__v,
+                delete ret.createdAt,
+                delete ret.updatedAt;
+        }
     },
     timestamps: true
 });
-exports.Customer = mongoose_1.default.model("customer", CustomerSchema);
-//# sourceMappingURL=Customer.js.map
+exports.Offer = mongoose_1.default.model("Offer", OfferSchema);
+//# sourceMappingURL=Offer.js.map

@@ -1,5 +1,9 @@
 import express from 'express';
-import { CustomerSignUp, CustomerLogin, CustomerVerify, RequestOtp, CustomerProfile, EditCustomerProfile } from '../controllers';
+import {
+    CustomerSignUp, CreateOrder, GetOrders, GetOrderById,
+    CustomerLogin, CustomerVerify, AddToCart, GetCart, DeleteCart,
+    RequestOtp, CustomerProfile, EditCustomerProfile
+} from '../controllers';
 
 import { Authentication } from '../middlewares';
 
@@ -19,10 +23,17 @@ router.get("/otp", RequestOtp);
 router.get("/profile", CustomerProfile);
 
 router.patch("/edit-profile", EditCustomerProfile);
-
+/** Order**/
+router.post("/create-order", CreateOrder);
+router.get("/orders", GetOrders);
+router.get("/order/:id", GetOrderById);
 
 /**-----Cart-----**/
-/**-----Order-----**/
+
+router.post("/add-to-cart", AddToCart);
+router.get("/cart", GetCart);
+router.delete("/delete-cart", DeleteCart);
+
 /**-----Payment-----**/
 
 

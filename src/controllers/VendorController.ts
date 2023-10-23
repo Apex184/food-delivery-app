@@ -1,7 +1,12 @@
 import express, { Request, Response, NextFunction } from "express";
-import { CreateFood, EditVendorInput, UpdateVendorService, VendorLoginInput, VendorPayload } from "../DTO";
+import {
+    CreateFood, EditVendorInput,
+    UpdateVendorService, VendorLoginInput,
+    VendorPayload, CreateOfferInput
+} from "../DTO";
 import { findVendor, validatePassword, generateSignature } from "../utility";
-import { Food, Vendor } from "../models";
+import { Food, Vendor, Offer } from "../models";
+import { Order } from "../models/Order";
 
 export const VendorLogin = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -160,7 +165,7 @@ export const getFoods = async (req: Request, res: Response, next: NextFunction) 
     try {
         const user = req.user;
         if (user) {
-            const existingVendor = await findVendor(user._id);
+            const existingVendor = await Vendor.findById(user._id);
             if (existingVendor !== null) {
 
                 const findFoods = await Food.find({ vendorId: existingVendor._id });
@@ -170,6 +175,136 @@ export const getFoods = async (req: Request, res: Response, next: NextFunction) 
 
         }
         return res.status(404).json({ success: false, message: "Vendor not found" });
+    } catch (error: any) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+
+
+}
+
+export const GetCurrentOrders = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user;
+        if (user) {
+            const existingOrder = await Order.find({ vendorId: user._id }).populate("items.food");
+            if (existingOrder !== null) {
+
+                return res.status(200).json({ success: true, message: "All orders fetched successfully", data: existingOrder });
+            }
+
+
+        }
+        return res.status(404).json({ success: false, message: "Order not found" });
+    } catch (error: any) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+
+
+}
+
+export const GetOrderDetails = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user;
+        if (user) {
+            const id = req.params.id;
+            const existingOrder = await Order.findById(id).populate("items.food");
+            if (existingOrder) {
+
+                return res.status(200).json({ success: true, message: "Order fetched successfully", data: existingOrder });
+            }
+
+
+        }
+        return res.status(404).json({ success: false, message: "Order not found" });
+    } catch (error: any) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+
+
+}
+
+
+export const ProcessOrder = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user;
+        const { status, time, remarks } = req.body;
+        if (user) {
+            const orderId = req.params.id;
+
+            if (orderId) {
+                const order = await Order.findById(orderId);
+                if (order) {
+                    order.orderStatus = status;
+                    if (time) {
+                        order.readyTime = time;
+                    }
+                    order.remarks = remarks;
+                    const savedOrder = await order.save();
+                    return res.status(200).json({ success: true, message: "Order processed successfully", data: savedOrder });
+
+                }
+
+            } else {
+                return res.status(404).json({ success: false, message: "Order not found" });
+            }
+        }
+
+        return res.status(404).json({ success: false, message: "Vendor not found" });
+    } catch (error: any) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+
+
+}
+
+export const GetOffers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
+    } catch (error: any) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+
+}
+
+export const PostOffers = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = req.user;
+        if (user) {
+            const { title, description, offerAmount, offerType, endValidity, promoCode, startValidity, pinCode, bank, bins, minValue, isActive, promoType } = <CreateOfferInput>req.body;
+            const vendor = await Vendor.findById(user._id);
+
+            if (vendor) {
+                const offer = await Offer.create({
+                    title,
+                    description,
+                    offerAmount,
+                    offerType,
+                    endValidity,
+                    promoCode,
+                    startValidity,
+                    pinCode,
+                    bank,
+                    bins,
+                    minValue,
+                    isActive,
+                    promoType,
+                    vendors: [vendor],
+                });
+                return res.status(200).json({ success: true, message: "Offer created successfully", data: offer });
+            }
+        }
+
+    } catch (error: any) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+
+
+}
+
+
+export const EditOffer = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+
     } catch (error: any) {
         return res.status(500).json({ success: false, message: error.message });
     }

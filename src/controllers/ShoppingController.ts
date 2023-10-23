@@ -6,8 +6,7 @@ import { Vendor, FoodDoc } from "../models"
 export const getFoodAvailability = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const pincode = req.params.pincode;
-        const result = await Vendor.find({ pinCode: pincode, serviceAvailable: true })
-            .sort([["rating", "descending"]])
+        const result = await Vendor.find({ pinCode: pincode, serviceAvailable: false })
             .populate("foods")
 
         if (result.length > 0) {
@@ -34,9 +33,9 @@ export const getFoodAvailability = async (req: Request, res: Response, next: Nex
 export const getTopRestaurants = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const pincode = req.params.pincode;
-        const result = await Vendor.find({ pinCode: pincode, serviceAvailable: true })
-            .sort([["rating", "descending"]])
-            .limit(1)
+        const result = await Vendor.find({ pinCode: pincode, serviceAvailable: false })
+            .sort({ rating: -1 })
+            .limit(10)
 
         if (result.length > 0) {
             res.status(200).json({
@@ -59,7 +58,7 @@ export const getTopRestaurants = async (req: Request, res: Response, next: NextF
 export const getFoodIn30Min = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const pincode = req.params.pincode;
-        const result = await Vendor.find({ pinCode: pincode, serviceAvailable: true }).populate('foods')
+        const result = await Vendor.find({ pinCode: pincode, serviceAvailable: false }).populate('foods')
 
         if (result.length > 0) {
             let foodResult: any = [];
