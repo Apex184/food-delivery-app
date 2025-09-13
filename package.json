@@ -32,7 +32,7 @@
     "nodemon": "^3.0.1",
     "textflow.js": "^0.1.4",
     "ts-node-dev": "^2.0.0",
-    "twilio": "^4.19.0"
+    "twilio": "^4.19.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.5",
